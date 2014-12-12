@@ -7,14 +7,18 @@ void getCenter(void);
 void getLeft(void);
 void isCenterClose(void);
 void isLeftClose(void);
-void stop(void);
 
 unsigned short centerSample[16];
 unsigned short leftSample[16];
 unsigned int t = 0;
+unsigned int left_index = 0;
+unsigned int center_index = 0;
 
-int THRESHOLDLEFT = 0x3B0;		// Threshold voltage for wall prescence
-int THRESHOLDCENTER = 0x3D0;
+int THRESHOLDLEFT = 0x170;		// Threshold voltage for wall prescence
+int THRESHOLDCENTER = 0x120;	// Lights on
+
+//int THRESHOLDLEFT = 0xFF;		// Lights off
+//int THRESHOLDCENTER = 0x100;
 
 void main(void) {
     WDTCTL = WDTPW | WDTHOLD;				  // Stop watchdog timer
@@ -53,59 +57,49 @@ void main(void) {
 } // end main
 
 void getCenter(void){
-	t = 0;
+	center_index = 0;
 	ADC10CTL0 = 0;											// Turn off ADC
-	ADC10CTL1 = INCH_2;						// Use channel A2
-	ADC10AE0 = BIT2;										// Enable P1.2 as ADC input
+	ADC10CTL1 = INCH_4;						// Use channel A4
+	ADC10AE0 = BIT4;										// Enable P1.4 as ADC input
 	ADC10CTL0 = SREF_0 | ADC10SHT_3 | ADC10ON | ENC;		// Vcc & Vss as reference
 	ADC10CTL0 |= ADC10SC;									// ADC conversion
 	ADC10CTL0 &= ~ENC;
 	while(ADC10CTL1 & ADC10BUSY);
-	centerSample[t] = ADC10MEM;
+	centerSample[center_index] = ADC10MEM;
 }
 
 void isCenterClose(void){
-	while(centerSample[t]<THRESHOLDCENTER){
+	while(centerSample[center_index]>THRESHOLDCENTER){
 		getLeft();
 		isLeftClose();
-		centerSample[t] = 0xFFFF;
+		centerSample[center_index] = 0;
 	}
-//	if(centerSample[t]<THRESHOLDCENTER){
-//		stop();
-//		getLeft();
-//		isLeftClose();
-//	}
 	moveForward();
 }
 
 void getLeft(void){
-	t = 0;
+	left_index = 0;
 	ADC10CTL0 = 0;											// Turn off ADC
-	ADC10CTL1 = INCH_1;						// Use channel A1
-	ADC10AE0 = BIT1;										// Enable P1.1 as ADC input
+	ADC10CTL1 = INCH_5;						// Use channel A5
+	ADC10AE0 = BIT5;										// Enable P1.5 as ADC input
 	ADC10CTL0 = SREF_0 | ADC10SHT_3 | ADC10ON | ENC;		// Vcc & Vss as reference
 	ADC10CTL0 |= ADC10SC;									// ADC conversion
 	ADC10CTL0 &= ~ENC;
 	while(ADC10CTL1 & ADC10BUSY);
-	leftSample[t] = ADC10MEM;
+	leftSample[left_index] = ADC10MEM;
 }
 
 void isLeftClose(void){
-	while(leftSample[t]>THRESHOLDLEFT){
+	while(leftSample[left_index]<THRESHOLDLEFT){
 		leftTurn();
-		leftSample[t] = 0;
-		return;
-	}
-	while(leftSample[t]<THRESHOLDLEFT){
-		rightTurn();
 		leftSample[t] = 0xFFFF;
 		return;
 	}
-//	if(leftSample[t]>THRESHOLDLEFT){
-//		leftTurn();
-//	} else {
-//		rightTurn();
-//	}
+	while(leftSample[left_index]>THRESHOLDLEFT){
+		rightTurn();
+		leftSample[t] = 0;
+		return;
+	}
 }
 
 void stop(void){
@@ -132,23 +126,19 @@ void moveForward(void) {
 void leftTurn(void) {
 
 	int t = 0;
-	TA1CCR1 = 0x0050;
-	while (t<0xFFFF){
+	while (t<0x58FF){
 		P2OUT &= ~BIT1;
 		P2OUT &= ~BIT5;
 		t++;
 	}
-	TA1CCR1 = 0x0020;
 }
 
 void rightTurn(void) {
 
 	int t = 0;
-    TA1CCR2 = 0x0030;
-	while (t<0xFFFF){
+	while (t<0x5CFF){
 		P2OUT |= BIT1;
 		P2OUT |= BIT5;
 		t++;
 	}
-    TA1CCR2 = 0x0020;
 }
