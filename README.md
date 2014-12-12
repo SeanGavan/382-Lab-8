@@ -159,10 +159,13 @@ void rightTurn(void) {
 }
 ```
 ## Debugging
-
-## Testing methodology / results
-
-## Observations and Conclusions
-
+My original idea had one large while loop with multiple embedded loops. After finding that the ADC10 system may have been incorrectly receiving, I decided that I needed a new approach. This meant that I would separate the sampling and conversions into their own respective functions to allow the ADC10 time to process everything. This also allowed for cleaner code as well.  
+Also, I had been using the P1.1 and P1.2 pins incorrectly. They were used in the motor lab for the timers, but used for ADC input in the IR lab. This meant that I needed to redefine my pins so that nothing would be conflicting. I did so by changing the ADC input to P1.4 and P1.5 since they were not being used.  
+The sensors would give very large voltages, this was because the sensors were being pointed upward toward the bottom of the metal surface of the circuit board. This was fixed by simply correcting them when needed since they would also be shifted when a wall was hit during testing
+## Testing methodology
+I would send the bot through the maze to see how each turn specific timing delay would work. I wanted the turns to be as close to 90 degrees as possible so that I could cut down on time that it would take to go through the maze.  
+The lighting in the room also played a part in how the sensors worked, and turning one light off resulted in less voltage being read by sensor. This meant that I needed to have two sets of thresholds for either scenario. I found these using the same method as Lab 7; finding the value when a wall was not close (baseline), and when one was close. 
+## Observations
+This lab served as a culmination of the semester's work. Not only did it combine the work of Lab 6 and Lab 7, but I also needed to understand how the MSP430 pins worked, and how to wire the circuit for the functionality I wanted. It also showed me how vital it is to keep track of what pins are being used and how. 
 ## Documentation
 I used C2C Kiernan's code to guide my organization, and also Dr. Coulston's code for a template on using the ADC10 system.
