@@ -8,7 +8,8 @@
 ## Software flow chart / algorithms
 
 ## Hardware schematic
-![alt text](https://raw.githubusercontent.com/SeanGavan/382-Lab-8/master/Images/Schematic.PNG "Schematic")
+![alt text](https://raw.githubusercontent.com/SeanGavan/382-Lab-8/master/Images/Schematic.PNG "MSP430")
+![alt text](https://raw.githubusercontent.com/SeanGavan/382-Lab-6/master/Images/Hardware.png "Hardware")
 ## Well-formatted code
 
 ## Debugging
