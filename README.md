@@ -4,14 +4,14 @@ The goal of this lab was to combine labs 6 and 7 to have the robot navigate a ma
 ## Preliminary design
 ![alt text](https://raw.githubusercontent.com/SeanGavan/382-Lab-8/master/Images/PreLab.PNG "Prelab")
 ## Software flow chart
-1) Establish arrays and indexes
-2) Establish constants for thresholds
-3) Initialize the motor system and timers
-4) Poll center sensor to check for a wall
-5) If no wall, then move forward
-6) IF there is, check the left sensor
-7) If there is a wall on the left, turn right
-8) Otherwise, turn left (follow the left wall)
+1) Establish arrays and indexes  
+2) Establish constants for thresholds  
+3) Initialize the motor system and timers  
+4) Poll center sensor to check for a wall  
+5) If no wall, then move forward  
+6) IF there is, check the left sensor  
+7) If there is a wall on the left, turn right  
+8) Otherwise, turn left (follow the left wall)  
 ## Hardware schematic
 ![alt text](https://raw.githubusercontent.com/SeanGavan/382-Lab-8/master/Images/Schematic.PNG "MSP430")
 ![alt text](https://raw.githubusercontent.com/SeanGavan/382-Lab-6/master/Images/Hardware.png "Hardware")
