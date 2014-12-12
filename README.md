@@ -8,9 +8,7 @@
 ## Software flow chart / algorithms
 
 ## Hardware schematic
-![alt text](https://github.com/SeanGavan/382-Lab-7/blob/master/Images/Schematic.PNG "MSP430 IR Sensors")
-![alt text](https://github.com/SeanGavan/382-Lab-6/blob/master/Images/MSP430.png "MSP430 Motor System")
-![alt text](https://github.com/SeanGavan/382-Lab-6/blob/master/Images/Hardware.png "Motor Driver Chip")
+![alt text](https://raw.githubusercontent.com/SeanGavan/382-Lab-8/master/Images/Schematic.PNG "Schematic")
 ## Well-formatted code
 
 ## Debugging
