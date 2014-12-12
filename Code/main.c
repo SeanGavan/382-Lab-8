@@ -1,3 +1,12 @@
+/**
+ * Sean Gavan
+ * 12 Dec. 14
+ * Lab 8 -- Robot Maze
+ * This lab had us combine labs 6 and 7 (using the motors and detecting walls with the IR sensors)
+ * to navigate our robot through a maze. This code uses a "follow the left wall" system to do so.
+ * Documentation: C2C Kiernan allowed me to look at his code in order to get a good organization style.
+ * I also used Dr. Coulston's coding template for the ADC10 system.
+ */
 #include <msp430.h>
 
 void moveForward(void);		// declaring methods for later
@@ -8,10 +17,10 @@ void getLeft(void);
 void isCenterClose(void);
 void isLeftClose(void);
 
-unsigned short centerSample[16];
+unsigned short centerSample[16];	// arrays to store ADC10MEM
 unsigned short leftSample[16];
-unsigned int t = 0;
-unsigned int left_index = 0;
+unsigned int t = 0;					// generic timer variable for movement methods
+unsigned int left_index = 0;		// array index counter
 unsigned int center_index = 0;
 
 int THRESHOLDLEFT = 0x170;		// Threshold voltage for wall prescence
@@ -65,52 +74,39 @@ void getCenter(void){
 	ADC10CTL0 |= ADC10SC;									// ADC conversion
 	ADC10CTL0 &= ~ENC;
 	while(ADC10CTL1 & ADC10BUSY);
-	centerSample[center_index] = ADC10MEM;
+	centerSample[center_index] = ADC10MEM;					// Store IR receiver reading
 }
 
 void isCenterClose(void){
-	while(centerSample[center_index]>THRESHOLDCENTER){
-		getLeft();
-		isLeftClose();
-		centerSample[center_index] = 0;
+	while(centerSample[center_index]>THRESHOLDCENTER){		// If there's a wall in front...
+		getLeft();											// Check for a wall on the left
+		isLeftClose();										// Is there one?
+		centerSample[center_index] = 0;						// Sets the array to exit the while loop
 	}
-	moveForward();
+	moveForward();											// Move forward either after turning or if not necessary
 }
 
 void getLeft(void){
-	left_index = 0;
+	left_index = 0;											// Reset array
 	ADC10CTL0 = 0;											// Turn off ADC
-	ADC10CTL1 = INCH_5;						// Use channel A5
+	ADC10CTL1 = INCH_5;										// Use channel A5
 	ADC10AE0 = BIT5;										// Enable P1.5 as ADC input
 	ADC10CTL0 = SREF_0 | ADC10SHT_3 | ADC10ON | ENC;		// Vcc & Vss as reference
 	ADC10CTL0 |= ADC10SC;									// ADC conversion
-	ADC10CTL0 &= ~ENC;
+	ADC10CTL0 &= ~ENC;										// Stop conversion
 	while(ADC10CTL1 & ADC10BUSY);
-	leftSample[left_index] = ADC10MEM;
+	leftSample[left_index] = ADC10MEM;						// Store IR reading
 }
 
 void isLeftClose(void){
-	while(leftSample[left_index]<THRESHOLDLEFT){
-		leftTurn();
-		leftSample[t] = 0xFFFF;
-		return;
+	while(leftSample[left_index]<THRESHOLDLEFT){			// Compare IR reading to check for a wall
+		leftTurn();											// No wall on the left -- turn that way
+		leftSample[left_index] = 0xFFFF;					// Exit while
 	}
-	while(leftSample[left_index]>THRESHOLDLEFT){
-		rightTurn();
-		leftSample[t] = 0;
-		return;
+	while(leftSample[left_index]>THRESHOLDLEFT){			// Wall to the left
+		rightTurn();										// Turn right
+		leftSample[left_index] = 0;							// Exit
 	}
-}
-
-void stop(void){
-	t = 0;
-	while(t<0xFFFF){
-		P2OUT &= ~BIT0;
-		P2OUT &= ~BIT3;
-		t++;
-	}
-	P2OUT |= BIT0;
-	P2OUT |= BIT3;
 }
 
 void moveForward(void) {
@@ -125,20 +121,20 @@ void moveForward(void) {
 
 void leftTurn(void) {
 
-	int t = 0;
-	while (t<0x58FF){
-		P2OUT &= ~BIT1;
-		P2OUT &= ~BIT5;
+	int t = 0;				// another timer
+	while (t<0x58FF){		// ~90 degree turn
+		P2OUT &= ~BIT1;		// L motor CW
+		P2OUT &= ~BIT5;		// R motor CW
 		t++;
 	}
 }
 
 void rightTurn(void) {
 
-	int t = 0;
-	while (t<0x5CFF){
-		P2OUT |= BIT1;
-		P2OUT |= BIT5;
+	int t = 0;				// timers
+	while (t<0x5CFF){		// ~90 degrees
+		P2OUT |= BIT1;		// L = CCW
+		P2OUT |= BIT5;		// R = CCW
 		t++;
 	}
 }
